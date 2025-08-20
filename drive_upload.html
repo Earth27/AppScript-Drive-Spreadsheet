@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		body {
+		  font-family: 'Segoe UI', Tahoma, sans-serif;
+		  background: linear-gradient(135deg, #43cea2, #185a9d);
+		  margin: 0;
+		  padding: 0;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  height: 100vh;
+		}
+
+		.container {
+			background: #fff;
+			padding: 40px;
+			margin: 50px auto;
+			max-width: 500px;
+			border-radius: 12px;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+			text-align: center;
+		}
+
+		h3 {
+			margin-top: 0;
+			font-size: 22px;
+			color: #333;
+		}
+
+		input[type="file"] {
+			margin: 20px 0;
+			padding: 10px;
+			font-size: 16px;
+			border-radius: 8px;
+			border: 1px solid #ccc;
+			width: 100%;
+		}
+
+		button {
+			padding: 12px 25px;
+			font-size: 16px;
+			background: #1976d2;
+			color: white;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			transition: background 0.3s ease;
+		}
+
+		button:hover {
+			background: #1565c0;
+		}
+
+		#message {
+			margin-top: 20px;
+			font-weight: bold;
+			color: #444;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h3>Upload File to Google Drive</h3>
+		<input type="file" id="fileInput">
+		<button onclick="uploadFile()">Upload</button>
+		<div id="message"></div>
+	</div>
+
+	<script>
+		function uploadFile() {
+      const fileInput = document.getElementById("fileInput").files[0];
+      if (!fileInput) {
+        document.getElementById("message").innerText = "⚠️ Please select a file.";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result.split(",")[1]; // base64 content
+        google.script.run.withSuccessHandler(function(msg) {
+          document.getElementById("message").innerText = msg;
+          document.getElementById("fileInput").value = "";
+        }).uploadToDrive(fileInput.name, content);
+      };
+      reader.readAsDataURL(fileInput);
+      document.getElementById("message").innerText = "⏳ Uploading...";
+    }
+	</script>
+</body>
+
+</html>
